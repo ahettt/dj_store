@@ -121,3 +121,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# URL, по которому мы будем обращаться к картинкам в браузере
+MEDIA_URL = '/media/'
+# Папка на компьютере, где физически будут лежать файлы
+MEDIA_ROOT = BASE_DIR / 'media'
