@@ -55,7 +55,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,3 +126,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 # Папка на компьютере, где физически будут лежать файлы
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Путь для подключения статических файлов
+STATIC_URL = 'static/'
+# Папка со статическими файлами проекта
+STATICFILES_DIRS = [BASE_DIR / 'static']
