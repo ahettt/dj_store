@@ -1,9 +1,54 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Каталог товаров{% endblock %}
+{% block title %}
+    {% if category %}{{ category.name }}{% else %}Все товары{% endif %}
+{% endblock %}
 
 {% block content %}
-    <h1>Добро пожаловать в магазин!</h1>
-    <p>Здесь скоро будут товары.</p>
-    <button class="btn btn-primary">Тестовая кнопка Bootstrap</button>
+<div class="row mt-4">
+    <div class="col-md-3">
+        <h3>Категории</h3>
+        <div class="list-group">
+            <a href="{% url 'store:product_list' %}" class="list-group-item list-group-item-action {% if not category %}active{% endif %}">
+                Все товары
+            </a>
+            {% for c in categories %}
+                <a href="{{ c.get_absolute_url }}" class="list-group-item list-group-item-action {% if category.slug == c.slug %}active{% endif %}">
+                    {{ c.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <h2 class="mb-4">
+            {% if category %}{{ category.name }}{% else %}Каталог товаров{% endif %}
+        </h2>
+
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: contain; padding: 10px;">
+                        {% else %}
+                            <img src="{% static 'img/no_image.png' %}" class="card-img-top" alt="Нет фото">
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">{{ product.name }}</h5>
+                            <p class="card-text text-success fw-bold">{{ product.price }} грн.</p>
+                            <a href="#" class="btn btn-primary w-100">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p>Товаров пока нет.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
