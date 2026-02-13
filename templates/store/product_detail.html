@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}">Главная</a></li>
+            <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded shadow" alt="{{ product.name }}">
+            {% else %}
+                <img src="{% static 'img/no_image.png' %}" class="img-fluid rounded shadow" alt="Нет фото">
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            <h1 class="display-5">{{ product.name }}</h1>
+            <p class="lead text-muted">Артикул: {{ product.id }}</p>
+            
+            <div class="fs-3 fw-bold text-success mb-3">
+                {{ product.price }} грн.
+            </div>
+
+            <p>{{ product.description|linebreaks }}</p>
+
+            <hr>
+
+            <form action="#" method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2 col-6 mx-auto mx-md-0">
+                    <button type="button" class="btn btn-primary btn-lg">
+                        Добавить в корзину
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
