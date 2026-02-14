@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'store',
+    'cart',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -62,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'cart.context_processors.cart',
             ],
         },
     },
@@ -131,3 +133,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_URL = 'static/'
 # Папка со статическими файлами проекта
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Ключ сессии для корзины
+CART_SESSION_ID = 'cart'
