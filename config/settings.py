@@ -34,6 +34,9 @@ INSTALLED_APPS = [
     'store',
     'cart',
     'orders',
+    'accounts',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -137,3 +140,11 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Ключ сессии для корзины
 CART_SESSION_ID = 'cart'
+
+# Crispy Forms
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Куда перенаправлять после входа/выхода
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

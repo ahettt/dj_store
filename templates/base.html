@@ -19,7 +19,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Главная</a>
+                        <a class="nav-link" href="{% url 'store:product_list' %}">Главная</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'cart:cart_detail' %}">
@@ -29,9 +29,30 @@
                             {% endif %}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Войти</a>
-                    </li>
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                Привет, {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#">Мои заказы</a></li> <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Выйти</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:register' %}">Регистрация</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
