@@ -1,5 +1,6 @@
 from django.db import models
 from store.models import Product
+from django.contrib.auth.models import User
 
 class Order(models.Model):
     first_name = models.CharField(max_length=50, verbose_name="Имя")
@@ -11,6 +12,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name="Создан")
     updated = models.DateTimeField(auto_now=True, verbose_name="Обновлен")
     paid = models.BooleanField(default=False, verbose_name="Оплачен")
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Пользователь")
 
     class Meta:
         ordering = ('-created',)
@@ -34,4 +36,4 @@ class OrderItem(models.Model):
         return str(self.id)
 
     def get_cost(self):
-        return self.price * self.quantity   
+        return self.price * self.quantity

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Мои заказы{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">История заказов</h2>
+
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>№ Заказа</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Сумма</th>
+                        <th>Товары</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.created|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            {% if order.paid %}
+                                <span class="badge bg-success">Оплачен</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Ожидает оплаты</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold">{{ order.get_total_cost }} грн.</td>
+                        <td>
+                            <ul class="list-unstyled mb-0">
+                                {% for item in order.items.all %}
+                                    <li>
+                                        {{ item.product.name }} 
+                                        <small class="text-muted">x{{ item.quantity }}</small>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            У вас пока нет заказов. <a href="{% url 'store:product_list' %}">Перейти в каталог</a>.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
