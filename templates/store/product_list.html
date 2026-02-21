@@ -22,8 +22,20 @@
     </div>
 
     <div class="col-md-9">
-        <h2 class="mb-4">
-            {% if category %}{{ category.name }}{% else %}Каталог товаров{% endif %}
+        <h2 class="mb-4 d-flex justify-content-between align-items-center">
+            <span>
+                {% if query %}
+                    Поиск: "{{ query }}"
+                {% elif category %}
+                    {{ category.name }}
+                {% else %}
+                    Каталог товаров
+                {% endif %}
+            </span>
+
+            {% if query %}
+                <a href="{% url 'store:product_list' %}" class="btn btn-sm btn-outline-danger">Сбросить поиск</a>
+            {% endif %}
         </h2>
 
         <div class="row">

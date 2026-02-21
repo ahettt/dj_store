@@ -1,14 +1,19 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Product
 from cart.forms import CartAddProductForm
+from django.db.models import Q
 
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
-    # Получаем все товары, которые есть в наличии
     products = Product.objects.filter(available=True)
 
-    # Логика для фильтрации
+    query = request.GET.get('q')
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        )
+
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
@@ -16,7 +21,8 @@ def product_list(request, category_slug=None):
     return render(request, 'store/product_list.html', {
         'category': category,
         'categories': categories,
-        'products': products
+        'products': products,
+        'query': query
     })
 
 
