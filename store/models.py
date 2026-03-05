@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name="Название категории")
@@ -26,6 +27,7 @@ class Product(models.Model):
     available = models.BooleanField(default=True, verbose_name="В наличии")
     created = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    discount = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)], verbose_name="Скидка в %")
 
     class Meta:
         verbose_name = "Товар"
@@ -34,6 +36,11 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('store:product_detail', args=[self.id, self.slug])
+
+    def get_sell_price(self):
+        if self.discount:
+            return round(self.price - (self.price * self.discount / 100), 2)
+        return self.price
 
     def __str__(self):
         return self.name

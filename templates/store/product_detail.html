@@ -26,8 +26,14 @@
             <h1 class="display-5">{{ product.name }}</h1>
             <p class="lead text-muted">Артикул: {{ product.id }}</p>
             
-            <div class="fs-3 fw-bold text-success mb-3">
-                {{ product.price }} грн.
+            <div class="mb-3">
+                {% if product.discount %}
+                    <del class="text-danger fs-5">{{ product.price }} грн.</del>
+                    <span class="fs-3 fw-bold text-success ms-3">{{ product.get_sell_price }} грн.</span>
+                    <span class="badge bg-warning text-dark align-text-top ms-2">-{{ product.discount }}%</span>
+                {% else %}
+                    <span class="fs-3 fw-bold text-success">{{ product.price }} грн.</span>
+                {% endif %}
             </div>
 
             <p>{{ product.description|linebreaks }}</p>
