@@ -3,6 +3,8 @@ from .models import Category, Product
 from cart.forms import CartAddProductForm
 from django.db.models import Q
 from django.core.paginator import Paginator
+from rest_framework import generics
+from .serializers import ProductSerializer
 
 
 def product_list(request, category_slug=None):
@@ -41,3 +43,9 @@ def product_detail(request, id, slug):
         'product': product,
         'cart_product_form': cart_product_form
     })
+
+# Виды API
+
+class ProductListAPIView(generics.ListAPIView):
+    queryset = Product.objects.filter(available=True)
+    serializer_class = ProductSerializer
