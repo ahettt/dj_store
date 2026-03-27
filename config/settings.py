@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
 
-    # Наши приложения
+    # Мои приложения
+    'rest_framework_simplejwt',
     'store',
     'cart',
     'orders',

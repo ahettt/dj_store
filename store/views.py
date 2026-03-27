@@ -7,6 +7,7 @@ from rest_framework import generics
 from .serializers import ProductSerializer
 
 
+
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
@@ -44,8 +45,6 @@ def product_detail(request, id, slug):
         'cart_product_form': cart_product_form
     })
 
-# Виды API
-
 class ProductListAPIView(generics.ListAPIView):
-    queryset = Product.objects.filter(available=True)
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
