@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#&+j3a5-mk48^0k%l0eqwfaf-+7jan6#7=x3i7q!&13l$_0hr^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['api.overpro.fit', '157.180.28.141', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -53,8 +53,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -159,11 +159,13 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Настройки CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "https://overpro.fit",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 # Настройки Django REST Framework
 REST_FRAMEWORK = {
