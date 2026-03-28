@@ -22,7 +22,7 @@ class Product(models.Model):
     slug = models.SlugField(max_length=200, unique=True, verbose_name="URL (слаг)")
     image = models.ImageField(upload_to='products/%Y/%m/%d', blank=True, verbose_name="Изображение")
     description = models.TextField(blank=True, verbose_name="Описание")
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Цена")
     available = models.BooleanField(default=True, verbose_name="В наличии")
     created = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
