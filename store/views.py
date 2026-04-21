@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import generics
 from .serializers import ProductSerializer
-
+from .serializers import CategorySerializer
 
 
 def product_list(request, category_slug=None):
@@ -48,3 +48,7 @@ def product_detail(request, id, slug):
 class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+class CategoryListAPIView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
