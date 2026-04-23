@@ -4,9 +4,7 @@ from cart.forms import CartAddProductForm
 from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import generics
-from .serializers import ProductSerializer
-from .serializers import CategorySerializer
-
+from .serializers import ProductSerializer, CategorySerializer
 
 def product_list(request, category_slug=None):
     category = None
@@ -24,9 +22,7 @@ def product_list(request, category_slug=None):
         products = products.filter(category=category)
 
     paginator = Paginator(products, 9)
-
     page_number = request.GET.get('page')
-
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'store/product_list.html', {
@@ -46,8 +42,24 @@ def product_detail(request, id, slug):
     })
 
 class ProductListAPIView(generics.ListAPIView):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        queryset = Product.objects.filter(available=True)
+
+        category_slug = self.request.query_params.get('category')
+        search_query = self.request.query_params.get('search')
+
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) | Q(description__icontains=search_query)
+            )
+
+        return queryset
+
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
