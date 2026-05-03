@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import generics
 from .serializers import ProductSerializer, CategorySerializer
+from thefuzz import fuzz
 
 def product_list(request, category_slug=None):
     category = None
@@ -45,18 +46,32 @@ class ProductListAPIView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
+        # Берем все доступные товары
         queryset = Product.objects.filter(available=True)
 
         category_slug = self.request.query_params.get('category')
         search_query = self.request.query_params.get('search')
 
+        # Обычная фильтрация по категории
         if category_slug:
             queryset = queryset.filter(category__slug=category_slug)
 
+        # Умная фильтрация по поиску
         if search_query:
-            queryset = queryset.filter(
-                Q(name__icontains=search_query) | Q(description__icontains=search_query)
-            )
+            search_query = search_query.lower()
+            matched_ids = []
+
+            for product in queryset:
+                name_score = fuzz.token_set_ratio(search_query, product.name.lower())
+                desc_score = fuzz.token_set_ratio(search_query, product.description.lower())
+                cat_score = fuzz.token_set_ratio(search_query, product.category.name.lower())
+
+                # Если сходство больше 60%, считаем, что товар найден
+                if name_score > 60 or desc_score > 60 or cat_score > 60:
+                    matched_ids.append(product.id)
+
+            # Оставляем только те товары, ID которых попали в наш список
+            queryset = queryset.filter(id__in=matched_ids)
 
         return queryset
 
