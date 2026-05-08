@@ -1,33 +1,63 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_POST
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 from store.models import Product
-from .cart import Cart
-from .forms import CartAddProductForm
+from .models import Cart, CartItem
+from .serializers import CartSerializer
 
-@require_POST
-def cart_add(request, product_id):
-    cart = Cart(request)
-    product = get_object_or_404(Product, id=product_id)
-    form = CartAddProductForm(request.POST)
-    if form.is_valid():
-        cd = form.cleaned_data
-        cart.add(product=product,
-                 quantity=cd['quantity'],
-                 update_quantity=cd['override'])
-    return redirect('cart:cart_detail')
 
-@require_POST
-def cart_remove(request, product_id):
-    cart = Cart(request)
-    product = get_object_or_404(Product, id=product_id)
-    cart.remove(product)
-    return redirect('cart:cart_detail')
+class CartAPIView(APIView):
+    # Доступ разрешен только авторизованным пользователям
+    permission_classes = [IsAuthenticated]
 
-def cart_detail(request):
-    cart = Cart(request)
-    for item in cart:
-        item['update_quantity_form'] = CartAddProductForm(initial={
-            'quantity': item['quantity'],
-            'override': True
-        })
-    return render(request, 'cart/detail.html', {'cart': cart})
+    def get_cart(self, user):
+        # Ищем корзину пользователя. Если её еще нет — создаем пустую.
+        cart, created = Cart.objects.get_or_create(user=user)
+        return cart
+
+    def get(self, request):
+        """Получить текущую корзину"""
+        cart = self.get_cart(request.user)
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """Добавить товар в корзину или увеличить его количество"""
+        cart = self.get_cart(request.user)
+        product_id = request.data.get('product_id')
+        quantity = int(request.data.get('quantity', 1))
+
+        product = get_object_or_404(Product, id=product_id)
+
+        # Проверяем, есть ли уже этот товар в корзине
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+
+        if not created:
+            # Если товар уже был, просто прибавляем количество
+            cart_item.quantity += quantity
+            cart_item.save()
+        else:
+            # Если товара не было, устанавливаем переданное количество
+            cart_item.quantity = quantity
+            cart_item.save()
+
+        # Возвращаем обновленную корзину
+        serializer = CartSerializer(cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request):
+        """Удалить товар из корзины или очистить её полностью"""
+        cart = self.get_cart(request.user)
+        product_id = request.data.get('product_id')
+
+        if product_id:
+            # Если передали ID товара — удаляем только его
+            CartItem.objects.filter(cart=cart, product_id=product_id).delete()
+        else:
+            # Если ID не передали — очищаем всю корзину
+            cart.items.all().delete()
+
+        serializer = CartSerializer(cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
