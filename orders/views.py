@@ -8,7 +8,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from store.models import Product
 from .models import Order
-
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .serializers import OrderSerializer
 
 def order_create(request):
     cart = Cart(request)
@@ -80,3 +82,10 @@ class OrderCreateAPIView(APIView):
         except Exception as e:
             # Если что-то пошло не так
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class UserOrdersAPIView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).order_by('-created')
