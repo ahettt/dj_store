@@ -1,11 +1,14 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Category, Product
+from .models import Category, Product, Review
 from cart.forms import CartAddProductForm
 from django.db.models import Q
 from django.core.paginator import Paginator
-from rest_framework import generics
-from .serializers import ProductSerializer, CategorySerializer
+from rest_framework import generics, status
+from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer
 from thefuzz import fuzz
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 def product_list(request, category_slug=None):
     category = None
@@ -84,3 +87,30 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.filter(available=True)
     serializer_class = ProductSerializer
     lookup_field = 'id'
+
+
+class ProductReviewAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request, product_id):
+        """Получить все отзывы для конкретного товара"""
+        reviews = Review.objects.filter(product_id=product_id)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, product_id):
+        """Добавить новый отзыв"""
+        product = get_object_or_404(Product, id=product_id)
+
+        if Review.objects.filter(product=product, user=request.user).exists():
+            return Response(
+                {'detail': 'Вы уже оставили отзыв на этот товар.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, product=product)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
