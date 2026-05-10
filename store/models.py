@@ -1,5 +1,7 @@
 from django.db import models
 from django.urls import reverse
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name="Название категории")
@@ -37,3 +39,18 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Один пользователь может оставить только один отзыв на конкретный товар
+        unique_together = ('product', 'user')
+        ordering = ['-created_at'] # Новые отзывы сверху
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} ({self.rating}/5)"
