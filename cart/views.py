@@ -7,11 +7,21 @@ def cart_detail(request):
     cart = Cart(request)
     return render(request, 'cart/detail.html', {'cart': cart})
 
+
 @require_POST
 def cart_add(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.add(product=product)
+
+    quantity = int(request.POST.get('quantity', 1))
+
+    override = request.POST.get('override', False)
+    if override in ['True', 'true', '1', 'on']:
+        override = True
+    else:
+        override = False
+
+    cart.add(product=product, quantity=quantity, override_quantity=override)
     return redirect('cart:cart_detail')
 
 @require_POST

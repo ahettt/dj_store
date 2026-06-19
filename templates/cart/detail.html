@@ -29,11 +29,17 @@
                     </a>
                 </td>
                 <td>
-                    <form action="{% url 'cart:cart_add' product.id %}" method="post" class="d-flex align-items-center">
+                    <form action="{% url 'cart:cart_add' product.id %}" method="post" class="d-flex align-items-center m-0">
                         {% csrf_token %}
-                        {{ item.update_quantity_form.quantity }}
-                        {{ item.update_quantity_form.override }}
-                        <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">Обновить</button>
+                        <input type="hidden" name="override" value="True">
+
+                        <div class="input-group input-group-sm" style="width: 120px;">
+                            <button class="btn btn-outline-secondary" type="button" onclick="this.nextElementSibling.stepDown(); this.form.submit();">-</button>
+
+                            <input type="number" name="quantity" value="{{ item.quantity }}" class="form-control text-center px-1" min="1" max="99">
+
+                            <button class="btn btn-outline-secondary" type="button" onclick="this.previousElementSibling.stepUp(); this.form.submit();">+</button>
+                        </div>
                     </form>
                 </td>
                 <td>{{ item.price }} грн.</td>
