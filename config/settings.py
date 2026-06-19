@@ -27,6 +27,7 @@ SECRET_KEY = 'django-insecure-#&+j3a5-mk48^0k%l0eqwfaf-+7jan6#7=x3i7q!&13l$_0hr^
 DEBUG = True
 
 ALLOWED_HOSTS = ['api.overpro.fit', '157.180.28.141', 'localhost', '127.0.0.1', '157.180.28.141']
+CSRF_TRUSTED_ORIGINS = ['https://django-ecommerce.overpro.fit']
 
 
 # Application definition
