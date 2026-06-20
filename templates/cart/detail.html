@@ -33,13 +33,11 @@
                         {% csrf_token %}
                         <input type="hidden" name="override" value="True">
 
-                        <div class="input-group input-group-sm" style="width: 120px;">
-                            <button class="btn btn-outline-secondary" type="button" onclick="this.nextElementSibling.stepDown(); this.form.submit();">-</button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="this.nextElementSibling.stepDown(); this.form.submit();">-</button>
 
-                            <input type="number" name="quantity" value="{{ item.quantity }}" class="form-control text-center px-1" min="1" max="99">
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="form-control form-control-sm mx-1 text-center" style="width: 50px;" onchange="this.form.submit();">
 
-                            <button class="btn btn-outline-secondary" type="button" onclick="this.previousElementSibling.stepUp(); this.form.submit();">+</button>
-                        </div>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="this.previousElementSibling.stepUp(); this.form.submit();">+</button>
                     </form>
                 </td>
                 <td>{{ item.price }} грн.</td>
